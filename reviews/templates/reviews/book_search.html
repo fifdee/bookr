@@ -1,0 +1,35 @@
+{% extends 'reviews/base.html' %}
+
+{% block title %}
+    {% if search %}
+        Search Results for {{ search }}
+    {% else %}
+        Book Search
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+    <h3>Search for Books</h3>
+    <form method="get">
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Search</button>
+
+        {% if books %}
+            <h3>Search Results for <i>{{ search }}</i></h3>
+            <ul class="list-group">
+            {% for book in books %}
+                <li class="list-group-item">
+                <span class="text-info">Title: </span> <span><a href="/book/{{ book.id }}/">{{ book.title }}</a></span>
+                <br>
+                <span class="text-info">Contributors: </span><span>{{ contributors }}</span>
+                </li>
+                <br>
+            {% endfor %}
+            </ul>
+        {% else %}
+            {% if search %}
+                <h3>No results found</h3>
+            {% endif %}
+        {% endif %}
+    </form>
+{% endblock content %}
