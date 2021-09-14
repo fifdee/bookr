@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if instance == None %}New {{ model_type }}
+    {% else %}Editing {{ model_type }} {{ instance }}
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+    <h2>
+        {% if instance == None %}New {{ model_type }}
+        {% else %}Editing {{ model_type }} <em>{{ instance }}</em>
+        {% endif %}
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">{% if instance == None %}Create{% else %}Save{% endif %}</button>
+    </form>
+{% endblock %}
