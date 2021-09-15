@@ -1,7 +1,8 @@
+import django.utils.timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book, Review, Contributor, Publisher
 from .utils import average_rating
-from .forms import SearchForm, PublisherForm
+from .forms import SearchForm, PublisherForm, ReviewForm
 from django.contrib import messages
 
 
@@ -83,4 +84,29 @@ def publisher_edit(request, pk=None):
                                                           'form': form})
 
 
-#def review_edit(request, book_pk, review_pk=None):
+def review_edit(request, book_pk, review_pk=None):
+    book_instance = get_object_or_404(Book, pk=book_pk)
+    if review_pk is not None:
+        review_instance = get_object_or_404(Review, book_id=book_pk, pk=review_pk)
+    else:
+        review_instance = None
+
+    if request.method == "POST":
+        form = ReviewForm(request.POST, instance=review_instance)
+        if form.is_valid():
+            updated_review = form.save(commit=False)
+            updated_review.book = book_instance
+            if review_instance:
+                updated_review.date_edited = django.utils.timezone.now()
+                messages.success(request, f'Review for "{book_instance.title}" updated.')
+            else:
+                messages.success(request, f'Review for "{book_instance.title}" created.')
+            updated_review.save()
+
+            return redirect('book_details', updated_review.book.pk)
+    else:
+        form = ReviewForm(instance=review_instance)
+
+    return render(request, 'reviews/instance-form.html', {'form': form, 'instance': review_instance,
+                                                          'model_type': "Review", 'related_model_type': "Book",
+                                                          'related_instance': book_instance})

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'reviews/base.html' %}
 
 {% block title %}
     {% if instance == None %}New {{ model_type }}
@@ -12,6 +12,11 @@
         {% else %}Editing {{ model_type }} <em>{{ instance }}</em>
         {% endif %}
     </h2>
+    <p>
+        {% if related_instance != None and related_model_type != None %}
+            For {{ related_model_type }} <em>{{ related_instance }}</em>
+        {% endif %}
+    </p>
 
     <form method="post">
         {% csrf_token %}
